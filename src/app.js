@@ -1,44 +1,23 @@
 import express  from "express";
+import connectDatabase from "./config/dbConnect.js";
+import routes from "./routes/index.js"
+
+const connection = await connectDatabase();
+
+connection.on("error", (erro) => {
+    console.error("erro de conexão", erro);
+});
+
+connection.once("open", () => {
+    console.log("Conexão com o banco feita com sucesso!");
+})
 
 const app = express();
-app.use(express.json());
+routes(app);
 
-const livros = [
-    {
-        id: 1,
-        titulo: "Solo Leveling"
-    },
-    {
-        id: 2,
-        titulo: "Classroom of the Elite"
-    },
-    {
-        id: 3,
-        titulo: "Konosuba"
-    }
-];
-
-function buscaLivro(id) {
-    return livros.findIndex(livro => livro.id === Number(id));
-}
-
-
-app.get("/", (req, res) => {
-    res.status(200).send("Curso de Node.js");
-});
-
-app.get("/livros", (req, res) => {
-    res.status(200).json(livros);
-});
-
-app.get("/livros/:id", (req, res) => {
-    const index = buscaLivro(req.params.id);
-    res.status(200).json(livros[index]);
-});
-
-app.post("/livros", (req, res) => {
-    livros.push(req.body);
-    res.status(201).send("livro cadastrado com sucesso");
+app.get("/livros/:id", async (req, res) => {
+    const livroBuscado = await livro.findById(req.params.id);
+    res.status(200).json(livroBuscado);
 });
 
 app.put("/livros/:id", (req, res) => {
