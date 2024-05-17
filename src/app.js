@@ -2,6 +2,7 @@ import express  from "express";
 import connectDatabase from "./config/dbConnect.js";
 import routes from "./routes/index.js"
 import manipuladorDeErros from "./middlewares/manipuladorDeErros.js";
+import manipulador404 from "./middlewares/manipulador404.js";
 
 const connection = await connectDatabase();
 
@@ -34,7 +35,7 @@ routes(app);
 
 //     res.status(200).send("Livro removido com sucesso!");
 // });
-
+app.use(manipulador404);
 app.use(manipuladorDeErros);
 
 export default app;

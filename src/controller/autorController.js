@@ -1,10 +1,11 @@
-import { autor } from "../model/Autor.js";
+import NaoEncontrado from "../erros/NaoEncontrado.js";
+import { autores } from "../model/index.js";
 
 class AutorController {
     static async listarAutores(req, res, next) {
 
         try {
-            const listaAutores = await autor.find({});
+            const listaAutores = await autores.find({});
             res.status(200).json(listaAutores);
         } catch(erro) {
             next(erro);
@@ -14,12 +15,12 @@ class AutorController {
     static async listarAutorPorId(req, res, next) {
         try {
             const id = req.params.id;
-            const autorBuscado = await autor.findById(id);
+            const autorBuscado = await autores.findById(id);
 
             if(autorBuscado !== null) {
                 res.status(200).json(autorBuscado);
             } else {
-                res.status(404).send({ message: "Id do autor não localizado!" });
+                next(new NaoEncontrado("Id do autor não localizado!"));
             }
         } catch (erro) {
             next(erro);
@@ -28,7 +29,7 @@ class AutorController {
 
     static async cadastrarAutor(req, res, next) {
         try {
-            const novoAutor = await autor.create(req.body);
+            const novoAutor = await autores.create(req.body);
             res.status(201).json({ message: "Criado com sucesso", autor: novoAutor });
         } catch(erro) {
             next(erro);
@@ -38,7 +39,7 @@ class AutorController {
     static async atualizaAutor(req, res, next) {
         try {
             const id = req.params.id;
-            await autor.findByIdAndUpdate(id, req.body);
+            await autores.findByIdAndUpdate(id, req.body);
             res.status(200).json({ message: "Autor atualizado com sucesso" });
         } catch (erro) {
             next(erro);
@@ -48,7 +49,7 @@ class AutorController {
     static async deletarAutor(req, res, next) {
         try {
             const id = req.params.id;
-            await autor.findByIdAndDelete(id);
+            await autores.findByIdAndDelete(id);
             res.status(200).json({ message: "Autor deletado com sucesso" })
         } catch (erro) {
             next(erro);
